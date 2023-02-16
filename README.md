@@ -5,7 +5,7 @@
 ## 📁 Brief
 
 > We have a need to pass in environment variables into a Docker Container and use them to do some string replacement (substitution) within the application code. This allows for greater reuse of the container between environments.
-> 
+>
 > This is a test to see how this can be done.
 
 ## Substitution within NGINX Conf
@@ -34,7 +34,7 @@ location /env {
 ...
 ```
 
-#### ⬆  After Processing
+#### ⬆ After Processing
 
 ```nginx
 # NGINX Config
@@ -54,20 +54,17 @@ To make this work, we have added references to the environment variables in our 
 
 ## Substitution within Other Files
 
-Due to [`envsubst`](https://linux.die.net/man/1/envsubst) returning an empty string on environmental variables not found, and our need for template literals within the same that use the same format as environmental variables, we need a way to specify variables that are allowed to be process.
-
-To do this we leveraged a feature within [`envsubst`](https://linux.die.net/man/1/envsubst) that allows specifiying a list of environmental variables to use. In doing so, it will ignore the rest.
-
 To get this to run, we wrote a bash script ([05-set-env.sh](./05-set-env.sh)) that is called when the container boots up. This is leveraging a feature also built in to the NGINX Container. If you add a script to the `/docker-entrypoint.d/` director and make it executable (done in the [`Dockerfile`](./Dockerfile)), it will run on container boot. In this case allowing us to pass in environmental variables to Docker and then using them in this script to process some files.
 
-### Example String Substitution with `envsubst` (Limit Variables)
+### Example String Substitution with `envsubst`
 
 ```bash
 # From 05-set-env.sh
 # Note: The first argument is a comma-delimited list.
 
-envsubst '$TEST_ENV' < /frontend/index.html > /tmp/index.html.temp && cp -f /tmp/index.html.temp /frontend/index.html
+envsubst < /frontend/index.html > /tmp/index.html.temp && cp -f /tmp/index.html.temp /frontend/index.html
 ```
+
 ### Example File Output
 
 In this example `TEST_ENV="exists"` gets passed into the container.
@@ -78,16 +75,14 @@ In this example `TEST_ENV="exists"` gets passed into the container.
 <!-- Sample from ./dist/index.html -->
 
 <p>Replace Env Var: ${TEST_ENV}</p>
-<p>Do Not Replace Template Literal: ${TEMPLATE_LITERAL}</p
 ```
 
-#### ⬆  After Processing
+#### ⬆ After Processing
 
 ```html
 <!-- Sample from ./dist/index.html -->
 
 <p>Replace Env Var: exists</p>
-<p>Do Not Replace Template Literal: ${TEMPLATE_LITERAL}</p
 ```
 
 ## Running the Project
