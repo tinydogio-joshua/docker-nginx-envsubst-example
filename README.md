@@ -1,4 +1,4 @@
-# 📦 Environment Variable String Substitution within NGINX Docker Container
+# 📦 Environment Variable String Substitution within NGINX Docker Containers
 
 ## 📁 Brief
 
